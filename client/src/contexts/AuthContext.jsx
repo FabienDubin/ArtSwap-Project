@@ -16,15 +16,15 @@ const AuthContextWrapper = ({ children }) => {
   //FUNCTIONS
   //Store token in the local storage when the user is authenticated
   const storeToken = (token) => {
-    localStorage.setItem("authToken", token);
+    localStorage.setItem("token", token);
   };
 
   //Verify the token if there is a token in the local storage
   const verifyToken = async () => {
-    const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("token");
     if (token) {
       try {
-        const response = await axios(`${API_URL}/auth/verify`, {
+        const response = await axios.get(`${API_URL}/auth/verify`, {
           headers: { authorisation: `Bearer ${token}` },
         });
         if (response.data.authenticated) {
@@ -33,7 +33,7 @@ const AuthContextWrapper = ({ children }) => {
           setIsLoading(false);
           console.log("🥳 User verified", user);
         } else {
-          localStorage.removeItem("authToken");
+          localStorage.removeItem("token");
           setIsLoggedIn(false);
           setIsLoading(false);
           nav("/login");
@@ -47,13 +47,12 @@ const AuthContextWrapper = ({ children }) => {
       }
     } else {
       setIsLoggedIn(false);
-      nav("/login");
     }
   };
 
   //Remove the token from the localstorage
   const handleLogout = () => {
-    localStorage.removeItem("authToken");
+    localStorage.removeItem("token");
     setIsLoggedIn(false);
     setUser(null);
     nav("/");
@@ -72,6 +71,7 @@ const AuthContextWrapper = ({ children }) => {
         isLoading,
         verifyToken,
         handleLogout,
+        storeToken,
       }}
     >
       {children}
