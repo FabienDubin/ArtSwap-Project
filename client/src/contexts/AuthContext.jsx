@@ -22,12 +22,14 @@ const AuthContextWrapper = ({ children }) => {
   //Verify the token if there is a token in the local storage
   const verifyToken = async () => {
     const token = localStorage.getItem("token");
+    console.log("token est la", token);
     if (token) {
       try {
         const response = await axios.get(`${API_URL}/auth/verify`, {
-          headers: { authorisation: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${token}` },
         });
-        if (response.data.authenticated) {
+
+        if (response.data) {
           setUser(response.data);
           setIsLoggedIn(true);
           setIsLoading(false);

@@ -1,10 +1,36 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link
+      id="favicon"
+      rel="icon"
+      type="image"
+      href="../client/src/assets/LogoLight.png"
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React</title>
+    <title>Art Swap 🤯</title>
+    <!-- <script>
+      // Update the favicon depending on the system settings
+      function updateFavicon() {
+        const theme = window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light";
+        const favicon = document.getElementById("favicon");
+        favicon.href =
+          theme === "dark"
+            ? "../client/src/assets/LogoDark.png"
+            : "../client/src/assets/LogoLight.png";
+      }
+
+      //Calling the fucntion
+      updateFavicon();
+
+      // ListenStates
+      window
+        .matchMedia("(prefers-color-scheme: dark)")
+        .addEventListener("change", updateFavicon);
+    </script> -->
   </head>
   <body>
     <div id="root"></div>

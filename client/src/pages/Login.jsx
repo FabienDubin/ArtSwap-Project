@@ -16,7 +16,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(false);
 
-  const { storeToken, authenticated } = useContext(AuthContext);
+  const { storeToken, verifyToken } = useContext(AuthContext);
 
   const nav = useNavigate();
 
@@ -36,6 +36,8 @@ const Login = () => {
       });
       console.log("Login response:", respose.data);
       storeToken(respose.data.token);
+      await verifyToken();
+      nav("/");
     } catch (error) {
       console.log(error);
       setErrorMessage(true);
@@ -44,7 +46,7 @@ const Login = () => {
 
   return (
     <>
-      <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
+      <div className="flex flex-col items-center justify-center min-h-[80vh]">
         <div className="container mx-auto p-8 md:max-w-3xl">
           <h1 className="text-2xl font-bold text-center mb-4 uppercase">
             Login
