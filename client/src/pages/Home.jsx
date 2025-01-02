@@ -10,7 +10,7 @@ const Home = ({ getImageSample, imageSample, isLoading, setIsLoading }) => {
 
   return (
     <>
-      <div className="flex flex-col justify-around items-center min-h-[80vh]">
+      <div className="flex flex-col justify-around items-center min-h-[85vh]">
         <Hero
           getImageSample={getImageSample}
           imageSample={imageSample}

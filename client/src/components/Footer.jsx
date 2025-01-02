@@ -75,13 +75,13 @@ const Footer = () => {
         {!isLoggedIn && <Button onClick={() => nav("/login")}>Login</Button>}
       </div>
 
-      <div
-        className={`hidden md:fixed md:w-full md:h-8  md:bottom-0 md:flex md:justify-around md:items-center shadow-top ${
+      {/* <div
+        className={`hidden  md:w-full md:flex md:justify-center md:py-2 md:items-center shadow-top ${
           theme === "dark" ? "bg-black" : "bg-white"
         } `}
       >
         Follow this project on Github !
-      </div>
+      </div> */}
     </div>
   );
 };

@@ -20,35 +20,59 @@ const AuthContextWrapper = ({ children }) => {
   };
 
   //Verify the token if there is a token in the local storage
-  const verifyToken = async () => {
-    const token = localStorage.getItem("token");
-    console.log("token est la", token);
-    if (token) {
-      try {
-        const response = await axios.get(`${API_URL}/auth/verify`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+  // const verifyToken = async () => {
+  //   const token = localStorage.getItem("token");
+  //   console.log("token est la", token);
+  //   if (token) {
+  //     try {
+  //       const response = await axios.get(`${API_URL}/auth/verify`, {
+  //         headers: { Authorization: `Bearer ${token}` },
+  //       });
 
-        if (response.data) {
-          setUser(response.data);
-          setIsLoggedIn(true);
-          setIsLoading(false);
-          console.log("🥳 User verified", user);
-        } else {
-          localStorage.removeItem("token");
-          setIsLoggedIn(false);
-          setIsLoading(false);
-          nav("/login");
-        }
-      } catch (error) {
-        console.error(error);
-        localStorage.removeItem("token");
-        setIsLoggedIn(false);
-        setIsLoading(false);
-        nav("/login");
-      }
-    } else {
+  //       if (response.data) {
+  //         console.log("✅ User verified", response.data);
+  //         setUser(response.data);
+  //         setIsLoggedIn(true);
+  //         setIsLoading(false);
+  //       } else {
+  //         localStorage.removeItem("token");
+  //         setIsLoggedIn(false);
+  //         setIsLoading(false);
+  //         nav("/login");
+  //       }
+  //     } catch (error) {
+  //       console.error(error);
+  //       localStorage.removeItem("token");
+  //       setIsLoggedIn(false);
+  //       setIsLoading(false);
+  //       nav("/login");
+  //     }
+  //   } else {
+  //     setIsLoggedIn(false);
+  //   }
+  // };
+
+  const verifyToken = async () => {
+    setIsLoading(true);
+    const token = localStorage.getItem("token");
+    if (!token) {
       setIsLoggedIn(false);
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const response = await axios.get(`${API_URL}/auth/verify`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setUser(response.data);
+      setIsLoggedIn(true);
+    } catch (error) {
+      console.error("Erreur lors de la vérification du token :", error);
+      localStorage.removeItem("token");
+      setIsLoggedIn(false);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -60,9 +84,15 @@ const AuthContextWrapper = ({ children }) => {
     nav("/");
   };
 
+  //Update the user on demand
+  const updateUser = (updatedUser) => {
+    setUser(updatedUser);
+  };
+
   //HOOKS
   useEffect(() => {
     verifyToken();
+    // console.log("verifyTokenhas been called");
   }, []);
 
   return (
@@ -74,6 +104,7 @@ const AuthContextWrapper = ({ children }) => {
         verifyToken,
         handleLogout,
         storeToken,
+        updateUser,
       }}
     >
       {children}
