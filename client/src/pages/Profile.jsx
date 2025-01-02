@@ -180,7 +180,9 @@ const Profile = () => {
 
   return (
     <div className="min-h-[85vh]">
-      <h1 className="text-3xl p-7 font-semibold uppercase">My Profile</h1>
+      <h1 className="text-3xl p-7 font-semibold uppercase text-center">
+        My Profile
+      </h1>
       <div className="flex justify-center items-center m-2">
         <img
           className="w-40 h-40 rounded-full border-2 object-cover border-gray-300"
@@ -326,7 +328,9 @@ const Profile = () => {
         </div>
       </div>
       <div>
-        <h1 className="text-3xl p-7 font-semibold uppercase">My Friends</h1>
+        <h1 className="text-3xl p-7 font-semibold uppercase text-center">
+          My Friends
+        </h1>
         <div className="w-2/3 mx-auto">
           <Gallery images={friends} onClick={handleImageClick} />
         </div>

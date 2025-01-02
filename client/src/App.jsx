@@ -14,6 +14,7 @@ import Feed from "./pages/Feed";
 import Friend from "./pages/Friend";
 import Login from "./pages/Login";
 import MyCollection from "./pages/MyCollection";
+import Image from "./pages/Image";
 import Profile from "./pages/Profile";
 import SignUp from "./pages/SignUp";
 import Swap from "./pages/Swap";
@@ -115,7 +116,11 @@ function App() {
             path="/feed"
             element={
               <ProtectedRoute>
-                <Feed />
+                <Feed
+                  addImageToCollection={addImageToCollection}
+                  deleteImageToCollection={deleteImageFromCollection}
+                  isImageInCollection={isImageInCollection}
+                />
               </ProtectedRoute>
             }
           />
@@ -132,6 +137,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <MyCollection />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/image/:imageId"
+            element={
+              <ProtectedRoute>
+                <Image />
               </ProtectedRoute>
             }
           />

@@ -50,7 +50,7 @@ const Footer = () => {
         <Button
           variant={isMyFeedPage ? "default" : "outline"}
           size="icon"
-          onClick={() => nav("/my-feed")}
+          onClick={() => nav("/feed")}
         >
           <Newspaper />
         </Button>
