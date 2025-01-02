@@ -89,9 +89,6 @@ const Profile = () => {
 
   //Update image profile
   const handleImageProfile = async (e) => {
-    // console.log(e.target.image.files[0]);
-    // const image = e.target.image.files[0];
-    // console.log(`${API_URL}`);
     if (!imageProfile) {
       console.log("No file Selected for upload");
       return;
@@ -143,7 +140,9 @@ const Profile = () => {
   //Move to the friend profile
   const handleImageClick = (index) => {
     const friendId = friends[index].id;
-    nav(`/a-boromir-to-trust/${friendId}`);
+    console.log(friends);
+    console.log(friendId);
+    nav(`/friend/${friendId}`);
   };
 
   //Get all friends
@@ -152,13 +151,13 @@ const Profile = () => {
       const response = await axios.get(
         `${API_URL}/user/allFriends/${user._id}`
       );
-      console.log(response.data);
+      // console.log(response.data);
       setFriends(
         response.data.friends.map((friend) => ({
           src: `${friend.image}?q=30`,
           width: 100,
           height: 100,
-          id: friend._id,
+          id: friend.id,
           customOverlay: (
             <div className="w-full absolute bottom-0 bg-black/60 text-white  p-2">
               <div>{friend.username}</div>
@@ -180,7 +179,7 @@ const Profile = () => {
   }, [isLoggedIn, user]);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-[85vh]">
       <h1 className="text-3xl p-7 font-semibold uppercase">My Profile</h1>
       <div className="flex justify-center items-center m-2">
         <img

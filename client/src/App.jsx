@@ -120,7 +120,7 @@ function App() {
             }
           />
           <Route
-            path="/friend"
+            path="/friend/:friendId"
             element={
               <ProtectedRoute>
                 <Friend />
