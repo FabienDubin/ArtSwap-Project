@@ -17,7 +17,7 @@ services:
     ports:
       - "80:80"
 
-  mongodb:
+  db:
     image: mongo:latest
     container_name: mongodb
     restart: always
