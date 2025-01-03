@@ -5,6 +5,7 @@ import axios from "axios";
 import { API_URL } from "./config/api.config";
 import { AuthContext } from "./contexts/AuthContext";
 import { ThemeProvider } from "./components/ThemeProvider";
+import { decode } from "blurhash";
 
 //Components import
 import Home from "./pages/Home";
@@ -28,9 +29,11 @@ function App() {
   //STATES
   const [isLoading, setIsLoading] = useState(true);
   const [imageSample, setImageSample] = useState([]);
+  const [isImageInCollection, setIsImageInCollection] = useState(false);
   const { user } = useContext(AuthContext);
 
   // FUNCTIONS;
+  //Managing images
   //Get a image sample from the API
   const getImageSample = async () => {
     try {
@@ -47,7 +50,7 @@ function App() {
     }
   };
 
-  //Add a card to the user's collection
+  //Add a image to the user's collection
   const addImageToCollection = async (imageId) => {
     try {
       const response = await axios.post(
@@ -60,7 +63,7 @@ function App() {
     }
   };
 
-  //Delete a card from the user's collection
+  //Delete a image from the user's collection
   const deleteImageFromCollection = async (imageId) => {
     try {
       const response = await axios.delete(
@@ -78,19 +81,20 @@ function App() {
     }
   };
 
-  //Check if the image is in collection
-  const isImageInCollection = async (imageId) => {
-    try {
-      const response = await axios.get(`${API_URL}/collection/isincollection`, {
-        userId: user._id,
-        imageId,
-      });
-      console.log("Is image in collection:", response.data);
-      return response.data;
-    } catch (error) {
-      console.log("Error checking if image is in collection:", error);
-      return false;
+  //Decoding BlurHash to URL data
+  const decodeBlurHashImage = (blurHash, width = 32, height = 32) => {
+    if (!blurHash || blurHash.length < 6) {
+      return "";
     }
+    const pixels = decode(blurHash, width, height);
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d");
+    const imageData = ctx.createImageData(width, height);
+    imageData.data.set(pixels);
+    ctx.putImageData(imageData, 0, 0);
+    return canvas.toDataURL();
   };
 
   return (
@@ -119,7 +123,7 @@ function App() {
                 <Feed
                   addImageToCollection={addImageToCollection}
                   deleteImageToCollection={deleteImageFromCollection}
-                  isImageInCollection={isImageInCollection}
+                  decodeBlurHashImage={decodeBlurHashImage}
                 />
               </ProtectedRoute>
             }
@@ -144,7 +148,13 @@ function App() {
             path="/image/:imageId"
             element={
               <ProtectedRoute>
-                <Image />
+                <Image
+                  addImageToCollection={addImageToCollection}
+                  deleteImageToCollection={deleteImageFromCollection}
+                  decodeBlurHashImage={decodeBlurHashImage}
+                  isLoading={isLoading}
+                  setIsLoading={setIsLoading}
+                />
               </ProtectedRoute>
             }
           />

@@ -9,7 +9,7 @@ import FeedBlock from "@/components/FeedBlock";
 const Feed = ({
   addImageToCollection,
   deleteImageToCollection,
-  isImageInCollection,
+  decodeBlurHashImage,
 }) => {
   //CONTEXT
   const { user } = useContext(AuthContext);
@@ -45,7 +45,9 @@ const Feed = ({
 
   return (
     <div>
-      <h1 className="text-3xl p-7 font-semibold uppercase">My Feed</h1>
+      <h1 className="text-3xl p-7 font-semibold uppercase text-center">
+        My Feed
+      </h1>
       {myFeed &&
         myFeed.map((post) => (
           <div key={post._id}>
@@ -53,10 +55,10 @@ const Feed = ({
               className=""
               addImageToCollection={addImageToCollection}
               deleteImageToCollection={deleteImageToCollection}
-              isImmageInCollection={isImageInCollection}
               post={post}
               isLoading={isLoading}
               setIsLoading={setIsLoading}
+              decodeBlurHashImage={decodeBlurHashImage}
             />
           </div>
         ))}

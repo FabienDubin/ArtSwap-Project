@@ -38,53 +38,24 @@ const FeedBlock = ({
   deleteImageToCollection,
   isLoading,
   setIsLoading,
+  decodeBlurHashImage,
 }) => {
+  //CONTEXT
   const { user } = useContext(AuthContext);
-  const [isInCollection, setIsInCollection] = useState(false);
+
+  const [isImageInCollection, setIsImageInCollection] = useState(false);
+
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState([]);
 
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
-  //Functions
-
-  //Check if is in collection
-  const checkIfInCollection = async () => {
-    // const body = { data: { userId: user._id, imageId: imageId } };
+  //FUNCTIONS
+  //Get the comments for this post
+  const getComments = async (post) => {
     try {
-      const { data } = await axios.get(`${API_URL}/collection/isincollection`, {
-        params: { userId: user._id, imageId: post.imageId._id },
-      });
-      //   console.log(data);
-      setIsInCollection(data.isInCollection);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  //Decoding BlurHash to URL data
-  const decodeBlurHashImage = (blurHash, width = 32, height = 32) => {
-    const pixels = decode(blurHash, width, height);
-    const canvas = document.createElement("canvas");
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext("2d");
-    const imageData = ctx.createImageData(width, height);
-    imageData.data.set(pixels);
-    ctx.putImageData(imageData, 0, 0);
-    return canvas.toDataURL();
-  };
-
-  //Get the 3 last comments for this post
-
-  const getComments = async () => {
-    console.log(post.imageId._id);
-    try {
-      const response = await axios.get(
-        `${API_URL}/comment/${post.imageId._id}`
-      );
+      const response = await axios.get(`${API_URL}/comment/${post}`);
       setComments(response.data.comments);
-      console.log(response.data.comments);
     } catch (error) {
       console.log("Din't mange to get the comments", error);
     }
@@ -104,15 +75,33 @@ const FeedBlock = ({
           newCommentData
         );
         setNewComment("");
+        getComments();
       } catch (error) {
         console.log("failed to get comments", error);
       }
     }
   };
 
+  //Check if the image is in collection
+  const checkIfIsImageInCollection = async (imageId) => {
+    try {
+      const response = await axios.get(`${API_URL}/collection/isincollection`, {
+        params: {
+          userId: user._id,
+          imageId,
+        },
+      });
+
+      setIsImageInCollection(response.data.isInCollection);
+    } catch (error) {
+      console.log("Error checking if image is in collection:", error);
+      return false;
+    }
+  };
+
   useEffect(() => {
-    checkIfInCollection();
-    getComments();
+    checkIfIsImageInCollection(post.imageId._id);
+    getComments(post.imageId._id);
   }, []);
 
   return (
@@ -129,6 +118,7 @@ const FeedBlock = ({
                 />
                 <AvatarFallback>??</AvatarFallback>
               </Avatar>
+
               <div className="flex flex-col justify-center items-start ml-2">
                 <h2 className="text-l ">{post.userId.username} </h2>
                 <p className="text-xs font-thin">
@@ -162,16 +152,18 @@ const FeedBlock = ({
           {/* Add to collection */}
           <Button
             onClick={() => {
-              isInCollection
+              isImageInCollection
                 ? (deleteImageToCollection(post.imageId._id),
-                  setIsInCollection(false))
+                  setIsImageInCollection(false))
                 : (addImageToCollection(post.imageId._id),
-                  setIsInCollection(true));
+                  setIsImageInCollection(true));
             }}
-            variant={isInCollection ? "secondary" : "default"}
+            variant={isImageInCollection ? "secondary" : "default"}
           >
-            {isInCollection ? <CircleMinus /> : <CirclePlus />}
-            {isInCollection ? " Remove from collection" : "Add to collection"}
+            {isImageInCollection ? <CircleMinus /> : <CirclePlus />}
+            {isImageInCollection
+              ? " Remove from collection"
+              : "Add to collection"}
           </Button>
 
           {/* Comments Drawer*/}
@@ -199,28 +191,36 @@ const FeedBlock = ({
                   {comments &&
                     comments.map((comment) => (
                       <Card key={comment._id} className="my-2">
-                        <div className="flex items-center m-4">
-                          <Avatar>
-                            <AvatarImage
-                              src={comment.userId.image}
-                              alt={comment.userId.username}
-                            />
-                            <AvatarFallback>??</AvatarFallback>
-                          </Avatar>
-                          <h2 className="text-l font-semibold ml-2">
-                            {comment.userId._id === user._id
-                              ? "You"
-                              : comment.userId.username}{" "}
-                            <span className="text-xs font-thin ml-2">
-                              {formatDistanceToNow(
-                                new Date(comment.createdAt),
-                                {
-                                  addSuffix: true,
-                                }
-                              )}
-                            </span>
-                          </h2>
-                        </div>
+                        <Link
+                          to={
+                            comment.userId._id === user._id
+                              ? "/profile"
+                              : `/friend/${comment.userId._id}`
+                          }
+                        >
+                          <div className="flex items-center m-4">
+                            <Avatar>
+                              <AvatarImage
+                                src={comment.userId.image}
+                                alt={comment.userId.username}
+                              />
+                              <AvatarFallback>??</AvatarFallback>
+                            </Avatar>
+                            <h2 className="text-l font-semibold ml-2">
+                              {comment.userId._id === user._id
+                                ? "You"
+                                : comment.userId.username}{" "}
+                              <span className="text-xs font-thin ml-2">
+                                {formatDistanceToNow(
+                                  new Date(comment.createdAt),
+                                  {
+                                    addSuffix: true,
+                                  }
+                                )}
+                              </span>
+                            </h2>
+                          </div>
+                        </Link>
                         <p className="m-4">{comment.comment}</p>
                       </Card>
                     ))}
