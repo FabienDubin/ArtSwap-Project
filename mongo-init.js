@@ -2,8 +2,8 @@ db = db.getSiblingDB("admin"); // Connexion à la base admin
 
 // Création d'un utilisateur admin
 db.createUser({
-  user: "admin",
-  pwd: "monMotDePasseSuperSecurise",
+  user: "fab",
+  pwd: "Milord13!",
   roles: [{ role: "userAdminAnyDatabase", db: "admin" }],
 });
 
@@ -13,6 +13,6 @@ db = db.getSiblingDB("artswap");
 // Création d'un utilisateur spécifique pour la base "artswap"
 db.createUser({
   user: "artswapUser",
-  pwd: "motDePasseArtswap",
+  pwd: "ArtPass",
   roles: [{ role: "readWrite", db: "artswap" }],
 });
