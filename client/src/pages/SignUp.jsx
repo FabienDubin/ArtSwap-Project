@@ -32,7 +32,7 @@ const SignUp = () => {
     //API call to sign up user
     try {
       const response = await axios.post(`${API_URL}/auth/sign-up`, newUser);
-      console.log(response.data);
+      // console.log(response.data);
       nav("/");
     } catch (error) {
       // console.log(error.response.data.message);
@@ -40,7 +40,7 @@ const SignUp = () => {
         "An error occurred while signing up. Check your informations"
       );
     }
-    console.log("Sign up form submitted");
+    // console.log("Sign up form submitted");
   };
 
   return (

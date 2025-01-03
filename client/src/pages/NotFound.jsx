@@ -21,10 +21,10 @@ const NotFound = ({
   //HOOK
   useEffect(() => {
     getImageSample();
-    console.log("Not Found Component Rendered");
+    // console.log("Not Found Component Rendered");
   }, []);
 
-  console.log(imageSample);
+  // console.log(imageSample);
   if (isLoading || !imageSample) {
     return <div>Loading...</div>;
   }

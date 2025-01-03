@@ -75,7 +75,7 @@ const FeedBlock = ({
           newCommentData
         );
         setNewComment("");
-        getComments();
+        getComments(post.imageId._id);
       } catch (error) {
         console.log("failed to get comments", error);
       }

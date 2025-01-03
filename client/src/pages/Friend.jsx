@@ -127,7 +127,7 @@ const Friend = () => {
       const response = await axios.put(
         `${API_URL}/user/togetheritsbetter/${user._id}/${friendId}`
       );
-      console.log("add as friend", response.data);
+      // console.log("add as friend", response.data);
       setIsFriends(!isFriends);
     } catch (error) {
       console.log(error);
@@ -139,7 +139,7 @@ const Friend = () => {
       const response = await axios.delete(
         `${API_URL}/user/togetheritsbetter/${user._id}/${friendId}`
       );
-      console.log("friend removed from friends", response.data);
+      // console.log("friend removed from friends", response.data);
       setIsFriends(!isFriends);
     } catch (error) {
       console.log(error);
@@ -147,10 +147,10 @@ const Friend = () => {
   };
 
   //Check if friend is on the user's friends array
-  const getIfFriends = async () => {
+  const getIfFriends = async (id) => {
     try {
       const response = await axios.get(
-        `${API_URL}/user/arefriends?userId=${user._id}&friendId=${friendId}`
+        `${API_URL}/user/arefriends?userId=${user._id}&friendId=${id}`
       );
       setIsFriends(response.data.areFriends);
     } catch (error) {
@@ -181,7 +181,7 @@ const Friend = () => {
     getFriendInfos();
     getFriendsOfFriend();
     getFriendCollection(10);
-    getIfFriends();
+    getIfFriends(friendId);
   }, [friendId, page, isFriends]);
 
   return (

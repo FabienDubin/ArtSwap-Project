@@ -57,7 +57,7 @@ function App() {
         `${API_URL}/collection/addtocollection`,
         { userId: user._id, imageId }
       );
-      console.log("Image added to collection:", response.data);
+      // console.log("Image added to collection:", response.data);
     } catch (error) {
       console.log("Error adding image to collection:", error);
     }
@@ -75,7 +75,7 @@ function App() {
           },
         }
       );
-      console.log("Image deleted from collection:", response.data);
+      // console.log("Image deleted from collection:", response.data);
     } catch (error) {
       console.log("Error deleting image from collection:", error);
     }

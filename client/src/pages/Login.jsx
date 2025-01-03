@@ -34,7 +34,7 @@ const Login = () => {
         email,
         password,
       });
-      console.log("Login response:", respose.data);
+      // console.log("Login response:", respose.data);
       storeToken(respose.data.token);
       await verifyToken();
       nav("/");

@@ -59,7 +59,7 @@ const Swap = ({
   };
 
   const outOfFrame = (name, idx) => {
-    console.log(`${name} (${idx}) left the screen!`, currentIndexRef.current);
+    // console.log(`${name} (${idx}) left the screen!`, currentIndexRef.current);
     // handle the case in which go back is pressed before card goes outOfFrame
     currentIndexRef.current >= idx && childRefs[idx].current.restoreCard();
     // TODO: when quickly swipe and restore multiple times the same card,
@@ -74,22 +74,22 @@ const Swap = ({
     }
     //Adding card to the collection
     if (dir === "right") {
-      console.log(
-        "add image to users collection",
-        imageSample[currentIndex]._id
-      );
+      // console.log(
+      //   "add image to users collection",
+      //   imageSample[currentIndex]._id
+      // );
       addImageToCollection(imageSample[currentIndex]._id);
-      console.log({
-        userId: user._id,
-        imageId: imageSample[currentIndex]._id,
-      });
+      // console.log({
+      //   userId: user._id,
+      //   imageId: imageSample[currentIndex]._id,
+      // });
 
       addedImages.push(imageSample[currentIndex]._id);
     }
   };
 
   const goBack = async () => {
-    console.log("back");
+    // console.log("back");
     if (!canGoBack) return;
     const imageToRemove = imageSample[currentIndex + 1]._id;
 
@@ -98,28 +98,28 @@ const Swap = ({
     await childRefs[newIndex].current.restoreCard();
 
     //Remove the image from the collection
-    console.log(
-      "user",
-      user,
-      "image to remove",
-      imageToRemove,
-      "-----to remove from Array----",
-      addedImages
-    );
+    // console.log(
+    //   "user",
+    //   user,
+    //   "image to remove",
+    //   imageToRemove,
+    //   "-----to remove from Array----",
+    //   addedImages
+    // );
     if (canGoBack && addedImages.includes(imageToRemove)) {
-      console.log({
-        userId: user._id,
-        imageId: imageToRemove,
-      });
+      // console.log({
+      //   userId: user._id,
+      //   imageId: imageToRemove,
+      // });
       deleteImageFromCollection(imageToRemove);
       addedImages.splice(
         addedImages.findIndex((image) => image === imageToRemove),
         1
       );
-      console.log(
-        "image has been removed from collection. Here is the new array : ",
-        addedImages
-      );
+      // console.log(
+      //   "image has been removed from collection. Here is the new array : ",
+      //   addedImages
+      // );
     }
   };
   //------- END OF - Tinder Card Set up - END OF ------------------//

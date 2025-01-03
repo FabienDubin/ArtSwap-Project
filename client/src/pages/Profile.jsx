@@ -1,12 +1,23 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "@/contexts/AuthContext";
+import { Link } from "react-router-dom";
 import { API_URL } from "@/config/api.config";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import _ from "lodash";
 
 //COMPONENTS
 import { Button } from "@/components/ui/button";
-import { Pencil, LockKeyhole, Terminal } from "lucide-react";
+import { Pencil, LockKeyhole, Terminal, CirclePlus } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Drawer,
   DrawerClose,
@@ -35,12 +46,17 @@ const Profile = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("***");
   const [friends, setFriends] = useState([]);
+
   const [errorMessage, setErrorMessage] = useState(null);
   const [imageProfile, setImageProfile] = useState("");
+  const [search, setSearch] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   //STATE HANDLERS FOR THE FORMDRAWER
   const [openEditProfile, setOpenEditProfile] = useState(false);
   const [openUpdatePassword, setOpenUpdatePassword] = useState(false);
+  const [openFindFriends, setOpenFindFriends] = useState(false);
 
   //NAVIGATION
   const nav = useNavigate();
@@ -81,7 +97,7 @@ const Profile = () => {
       });
       getUserInfos();
       setOpenEditProfile(false);
-      console.log("user updated");
+      // console.log("user updated");
     } catch (error) {
       console.log("failed to update user", error);
     }
@@ -98,7 +114,7 @@ const Profile = () => {
     axios
       .put(`${API_URL}/user/update-image/${user._id}`, imageData)
       .then((res) => {
-        console.log("here is the response", res.data);
+        // console.log("here is the response", res.data);
         const updatedUser = res.data.updatedUser;
         setUserInfos(updatedUser);
         updateUser(updatedUser);
@@ -125,7 +141,7 @@ const Profile = () => {
           newPassword,
         }
       );
-      console.log(response.data.message);
+      // console.log(response.data.message);
       alert("Password updated successfully!");
       setOldPassword("");
       setNewPassword("");
@@ -140,8 +156,6 @@ const Profile = () => {
   //Move to the friend profile
   const handleImageClick = (index) => {
     const friendId = friends[index].id;
-    console.log(friends);
-    console.log(friendId);
     nav(`/friend/${friendId}`);
   };
 
@@ -168,6 +182,33 @@ const Profile = () => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  //Search for friends
+  const searchForFriends = _.debounce(async (query) => {
+    if (!query || query.trim().length === 0) {
+      setSearchResults([]);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `${API_URL}/user/search-friend?username=${encodeURI(query)}`
+      );
+      setSearchResults(response.data);
+      console.log(searchResults);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  }, 300);
+
+  //Handle Search for friends
+  const handleSearchInput = (e) => {
+    setSearch(e.target.value);
+    searchForFriends(e.target.value);
   };
 
   //HOOKS
@@ -328,9 +369,68 @@ const Profile = () => {
         </div>
       </div>
       <div>
-        <h1 className="text-3xl p-7 font-semibold uppercase text-center">
-          My Friends
-        </h1>
+        <div className="flex flex-col p-7 justify-center items-center">
+          <h1 className="text-3xl font-semibold uppercase text-center">
+            My Friends
+          </h1>
+          <Drawer open={openFindFriends} onOpenChange={setOpenFindFriends}>
+            <DrawerTrigger asChild>
+              <Button className="m-4">
+                <CirclePlus /> Add Friends
+              </Button>
+            </DrawerTrigger>
+            <DrawerContent className="mx-2 p-4">
+              <DrawerHeader>
+                <DrawerTitle>Look for friends below</DrawerTitle>
+              </DrawerHeader>
+              <div className="flex-grow overflow-y-auto max-h-56">
+                {searchResults.length === 0 && <p>No friends found</p>}
+                {searchResults.length > 0 &&
+                  searchResults.map((friend) => (
+                    <Card key={friend._id} className="mx-4 my-2">
+                      <Link to={`/friend/${friend._id}`}>
+                        {friend._id !== user._id && (
+                          <CardHeader className="flex flex-row justify-between items-center">
+                            <div>
+                              <CardTitle className="flex items-center space-x-4">
+                                <Avatar>
+                                  <AvatarImage
+                                    src={friend.image}
+                                    alt={friend.username}
+                                  />
+                                </Avatar>
+                                <h3>{friend.username}</h3>
+                              </CardTitle>
+                            </div>
+                            {/* TO update later */}
+                            {/* <Button
+                              variant={
+                                friends.includes(friend) ? "outline" : "default"
+                              }
+                            >
+                              {friends.includes(friend)
+                                ? "Following"
+                                : "Not Following Yet"}
+                            </Button> */}
+                          </CardHeader>
+                        )}
+                      </Link>
+                    </Card>
+                  ))}
+              </div>
+              <DrawerFooter>
+                <Input
+                  type="text"
+                  id="search"
+                  placeholder="Type to find friends"
+                  value={search}
+                  onChange={handleSearchInput}
+                  // disabled={loading}
+                />
+              </DrawerFooter>
+            </DrawerContent>
+          </Drawer>
+        </div>
         <div className="w-2/3 mx-auto">
           <Gallery images={friends} onClick={handleImageClick} />
         </div>

@@ -3,7 +3,6 @@ import { AuthContext } from "@/contexts/AuthContext";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { API_URL } from "@/config/api.config";
-import { Link } from "react-router-dom";
 import { format, formatDistanceToNow } from "date-fns";
 
 //COMPONENTS
@@ -122,7 +121,7 @@ const Image = ({
     checkIfIsImageInCollection(imageId);
   }, [imageId, user]);
 
-  console.log(image);
+  // console.log(image);
 
   return (
     <div className="mb-20">
