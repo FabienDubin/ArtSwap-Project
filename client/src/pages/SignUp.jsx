@@ -16,17 +16,19 @@ const SignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [username, setUsername] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
+  const [token, setToken] = useState("");
 
   const nav = useNavigate();
   //FUNCTIONS
   const handleSignUp = async (e) => {
     setErrorMessage(null);
     e.preventDefault();
-    // Add your sign-up logic here
+
     const newUser = {
       email,
       password,
       username,
+      token,
     };
 
     //API call to sign up user
@@ -42,6 +44,29 @@ const SignUp = () => {
     }
     // console.log("Sign up form submitted");
   };
+
+  //ReCatCha
+  // const handleSubmitCaptcha = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       "https://www.google.com/recaptcha/api/siteverify",
+  //       {
+  //         params: {
+  //           secret: "YOUR_RECAPTCHA_SECRET_KEY",
+  //           response: token,
+  //         },
+  //       }
+  //     );
+
+  //     if (response.data.success) {
+  //       setToken(response.data.token);
+  //     } else {
+  //       setErrorMessage("Failed to verify CAPTCHA");
+  //     }
+  //   } catch (error) {
+  //     setErrorMessage("An error occurred while verifying CAPTCHA");
+  //   }
+  // };
 
   return (
     <div className="flex flex-col items-center justify-center h-screen ">
@@ -83,6 +108,21 @@ const SignUp = () => {
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
           />
+
+          {/* reCAPTCHA script */}
+          {/* <script
+            src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
+            async
+            defer
+          ></script> */}
+
+          {/* reCAPTCHA widget */}
+          {/* <div
+            className="g-recaptcha"
+            data-sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
+            onClick={handleSubmitCaptcha}
+          ></div> */}
+
           <Button
             variant={password === confirmPassword ? "default" : "secondary"}
             className="mt-4 w-full"
