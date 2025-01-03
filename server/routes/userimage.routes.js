@@ -40,7 +40,7 @@ router.post("/addtocollection", async (req, res, next) => {
 });
 
 //Remove an image to a user collection
-router.delete("/removefromcollection/", async (req, res, next) => {
+router.delete("/deletefromcollection", async (req, res, next) => {
   const userId = req.body.userId;
   const imageId = req.body.imageId;
 
@@ -65,7 +65,7 @@ router.delete("/removefromcollection/", async (req, res, next) => {
       imageId,
     });
     res.status(200).json({
-      message: "🥳image has been delete from users collection",
+      message: "🥳image has been deleted successfully from users collection",
       data: deletedImage,
     });
   } catch (err) {
@@ -77,6 +77,7 @@ router.delete("/removefromcollection/", async (req, res, next) => {
 router.get("/isincollection", async (req, res, next) => {
   const userId = req.query.userId;
   const imageId = req.query.imageId;
+
   try {
     //checking if the user and the image exist
     const user = await UserModel.findById(userId);
@@ -166,7 +167,7 @@ router.get("/getalluserimages/:userId", async (req, res, next) => {
       .sort({ createdAt: -1 })
       .limit(limit)
       .skip(skip);
-    console.log(otherUsersImages);
+    // console.log(otherUsersImages);
     res.status(200).json({
       message: "🥳all users images found",
       images: otherUsersImages,

@@ -22,6 +22,8 @@ const userSchema = new Schema(
     },
     image: {
       type: String,
+      default:
+        "https://www.creativefabrica.com/wp-content/uploads/2022/09/15/Black-ink-drop-mark-Paint-stain-splatte-Graphics-38548553-1-1-580x387.png",
     },
     isFakeUser: { type: Boolean, default: false },
     friends: [

@@ -4,6 +4,8 @@
 const bcrypt = require("bcrypt");
 const router = require("express").Router();
 const UserModel = require("../models/User.model.js");
+//To add image size we use probe-image-size package
+const probe = require("probe-image-size");
 
 //Edit a user
 router.put("/update/:userId", async (req, res, next) => {
@@ -151,13 +153,69 @@ router.get("/arefriends", async (req, res, next) => {
   }
 });
 
+//Dynamic search for a friend
+router.get("/search-friend", async (req, res, next) => {
+  const query = req.query.username;
+
+  try {
+    if (!query || query.trim().length === 0) {
+      return res.json([]);
+    }
+
+    const users = await UserModel.find({
+      username: { $regex: query, $options: "i" },
+    });
+
+    res.json(users);
+  } catch (err) {
+    next(err);
+  }
+});
+
 //Get all friends
 router.get("/allFriends/:userId", async (req, res, next) => {
   try {
-    const friends = await UserModel.findById(req.params.userId).populate(
+    // Get the user by ID and populate their friends
+    const user = await UserModel.findById(req.params.userId).populate(
       "friends"
     );
-    res.status(200).json({ message: "🥳 all friends found", friends });
+
+    if (!user) {
+      return res.status(404).json({ message: "🤦‍♂️ User not found!" });
+    }
+
+    // Get image dimension if possible
+    const friendsWithDimensions = await Promise.all(
+      user.friends.map(async (friend) => {
+        try {
+          const dimensions = await probe(`${friend.image}?q=30`);
+          return {
+            id: friend._id,
+            username: friend.username,
+            image: friend.image,
+            width: dimensions.width,
+            height: dimensions.height,
+          };
+        } catch (error) {
+          console.error(
+            `Did not manage to find the dimensions of : ${friend.image}`,
+            error
+          );
+          return {
+            id: friend._id,
+            username: friend.username,
+            image: friend.image,
+            width: 300,
+            height: 300,
+          };
+        }
+      })
+    );
+
+    res.status(200).json({
+      message: "🥳 Friends found !",
+      friends: friendsWithDimensions,
+    });
   } catch (err) {
     next(err);
   }
@@ -174,28 +232,28 @@ router.get("/:userId", async (req, res, next) => {
 });
 
 // // Change Profile Picture via Cloudinary
-// const uploader = require("../middleware/cloudinary.config.js");
-// router.put(
-//   "/upload/:userId",
-//   uploader.single("imageUrl"),
-//   async (req, res, next) => {
-//     // the uploader.single() callback will send tnhe file to cloudinary and get you and obj with the url in return
-//     console.log("file is: ", req.file, "user id", req.params.userId);
+const uploader = require("../middleware/cloudinary.middleware.js");
+router.put(
+  "/update-image/:userId",
+  uploader.single("imageUrl"),
+  async (req, res, next) => {
+    // the uploader.single() callback will send tnhe file to cloudinary and get you and obj with the url in return
+    console.log("file is: ", req.file, "user id", req.params.userId);
 
-//     if (!req.file) {
-//       console.log("there was an error uploading the file");
-//       next(new Error("No file uploaded!"));
-//       return;
-//     } else {
-//       const updatedUser = await UserModel.findByIdAndUpdate(
-//         req.params.userId,
-//         { image: req.file.path },
-//         { new: true }
-//       );
-//       console.log("user image updated", updatedUser);
-//       res.status(200).json({ message: "🥳 user image updated", updatedUser });
-//     }
-//   }
-// );
+    if (!req.file) {
+      console.log("there was an error uploading the file");
+      next(new Error("No file uploaded!"));
+      return;
+    } else {
+      const updatedUser = await UserModel.findByIdAndUpdate(
+        req.params.userId,
+        { image: req.file.path },
+        { new: true }
+      );
+      console.log("user image updated", updatedUser);
+      res.status(200).json({ message: "🥳 user image updated", updatedUser });
+    }
+  }
+);
 
 module.exports = router;
