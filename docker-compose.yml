@@ -5,9 +5,9 @@ services:
     ports:
       - "5005:5005"
     env_file:
-      - ./backend/.env
+      - ./server/.env
     volumes:
-      - ./backend:/app
+      - ./server:/app
     depends_on:
       - db
 
