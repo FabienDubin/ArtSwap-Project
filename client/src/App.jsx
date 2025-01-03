@@ -171,7 +171,19 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="*" element={<NotFound />} />
+          <Route
+            path="*"
+            element={
+              <NotFound
+                getImageSample={getImageSample}
+                imageSample={imageSample}
+                isLoading={isLoading}
+                setIsLoading={setIsLoading}
+                addImageToCollection={addImageToCollection}
+                deleteImageFromCollection={deleteImageFromCollection}
+              />
+            }
+          />
         </Routes>
         <Footer />
       </ThemeProvider>
