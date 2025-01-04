@@ -13,7 +13,7 @@ const cookieParser = require("cookie-parser");
 // unless the request is made from the same domain, by default express wont accept POST requests
 const cors = require("cors");
 
-const FRONTEND_URL = process.env.ORIGIN || "http://localhost:5173";
+const FRONTEND_URL = process.env.ORIGIN || "https://www.art-swap.xyz";
 
 // Middleware configuration
 module.exports = (app) => {
@@ -24,7 +24,13 @@ module.exports = (app) => {
   // controls a very specific header to pass headers from the frontend
   app.use(
     cors({
-      origin: [FRONTEND_URL],
+      origin: FRONTEND_URL, // Autorise uniquement le domaine du frontend
+      credentials: true, // Nécessaire pour les cookies et les sessions
+      methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // Méthodes autorisées
+      allowedHeaders: [
+        "Content-Type",
+        "Authorization", // Autorise l'en-tête Authorization pour les JWT
+      ],
     })
   );
 

@@ -13,12 +13,15 @@ COPY . .
 # Build the project
 RUN npm run build
 
-FROM nginx:alpine
+# Serve the built files with a lightweight server
+FROM node:18
 
-# Copy the built files to the nginx html folder
-COPY --from=build /app/dist /usr/share/nginx/html
+WORKDIR /app
+COPY --from=build /app/dist ./
+
+RUN npm install -g serve
 
 # Expose port 80
 EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["serve", "-s", ".", "-l", "80"]
