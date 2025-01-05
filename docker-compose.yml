@@ -1,0 +1,49 @@
+name: art-swap
+
+services:
+  mongo:
+    image: mongo:8.0.1
+    networks:
+      - art-swap
+    ports:
+      - 27017:27017 #to be removed on production
+    volumes:
+      - mongo_data:/data/db
+  api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file: ./server/.env
+    networks:
+      - art-swap
+    ports:
+      - "5005:5005"
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    depends_on:
+      - mongo
+
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file: ./client/.env
+    volumes:
+      - ./client:/app
+        - /app/node_modules
+    networks:
+      - art-swap
+    ports:
+      - "5173:5173"
+    command: npm run dev -- --host
+    depends_on:
+      - api
+
+volumes:
+  mongo_data:
+networks:
+  art-swap:
+    driver: bridge
