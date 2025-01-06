@@ -5,8 +5,12 @@ services:
     image: mongo:8.0.1
     networks:
       - art-swap
-    ports:
-      - 27017:27017 #to be removed on production
+    # ports:
+    #   - 27017:27017 #to be removed on production
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=secret
+
     volumes:
       - mongo_data:/data/db
   api:
@@ -33,7 +37,7 @@ services:
     env_file: ./client/.env
     volumes:
       - ./client:/app
-        - /app/node_modules
+      - /app/node_modules
     networks:
       - art-swap
     ports:
@@ -41,6 +45,38 @@ services:
     command: npm run dev -- --host
     depends_on:
       - api
+
+  proxy:
+    image: "jc21/nginx-proxy-manager:latest"
+    restart: unless-stopped
+    networks:
+      - art-swap
+    ports:
+      - "80:80"
+      - "81:81"
+      - "443:443"
+    environment:
+      DB_MYSQL_HOST: "proxy_db"
+      DB_MYSQL_PORT: 3306
+      DB_MYSQL_USER: "npm"
+      DB_MYSQL_PASSWORD: "npm"
+      DB_MYSQL_NAME: "npm"
+    volumes:
+      - /home/fab/nginx-proxy-manager/data:/data
+      - /home/fab/nginx-proxy-manager/letsencrypt:/etc/letsencrypt
+
+  proxy_db:
+    image: "jc21/mariadb-aria:latest"
+    restart: unless-stopped
+    networks:
+      - art-swap
+    environment:
+      MYSQL_ROOT_PASSWORD: "npm"
+      MYSQL_DATABASE: "npm"
+      MYSQL_USER: "npm"
+      MYSQL_PASSWORD: "npm"
+    volumes:
+      - /home/fab/nginx-proxy-manager/mysql:/var/lib/mysql
 
 volumes:
   mongo_data:
