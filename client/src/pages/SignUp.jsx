@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API_URL } from "@/config/api.config";
+import { AuthContext } from "@/contexts/AuthContext";
 
 //COMPONENTS
 import { Button } from "@/components/ui/button";
@@ -16,33 +17,40 @@ const SignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [username, setUsername] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
-  const [token, setToken] = useState("");
+  // const [token, setToken] = useState("");
+  const [honeypot, setHoneypot] = useState("");
+
+  //CONTEXT
+  const { storeToken, verifyToken } = useContext(AuthContext);
 
   const nav = useNavigate();
   //FUNCTIONS
   const handleSignUp = async (e) => {
     setErrorMessage(null);
     e.preventDefault();
+    if (honeypot === "") {
+      const newUser = {
+        email,
+        password,
+        username,
+      };
 
-    const newUser = {
-      email,
-      password,
-      username,
-      token,
-    };
-
-    //API call to sign up user
-    try {
-      const response = await axios.post(`${API_URL}/auth/sign-up`, newUser);
-      // console.log(response.data);
-      nav("/");
-    } catch (error) {
-      // console.log(error.response.data.message);
-      setErrorMessage(
-        "An error occurred while signing up. Check your informations"
-      );
+      //API call to sign up user
+      try {
+        const response = await axios.post(`${API_URL}/auth/sign-up`, newUser);
+        storeToken(response.data.user.token);
+        verifyToken();
+        nav("/");
+      } catch (error) {
+        // console.log(error.response.data.message);
+        setErrorMessage(
+          "An error occurred while signing up. Check your informations"
+        );
+      }
+      // console.log("Sign up form submitted");
+    } else {
+      console.log("Bot detected");
     }
-    // console.log("Sign up form submitted");
   };
 
   //ReCatCha
@@ -107,6 +115,15 @@ const SignUp = () => {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
+          />
+          {/* Honeypot for limit the bots. Recaptcha to be implemented */}
+          <Input
+            type="text"
+            name="honeypot"
+            className="hidden"
+            tabIndex="-1"
+            autoComplete="off"
+            onChange={(e) => setHoneypot(e.target.value)}
           />
 
           {/* reCAPTCHA script */}

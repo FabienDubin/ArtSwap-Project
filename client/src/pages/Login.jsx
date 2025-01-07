@@ -11,11 +11,12 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Siren } from "lucide-react";
 
 const Login = () => {
-  //SETTERS
+  //STATES
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(false);
 
+  //CONTEXT
   const { storeToken, verifyToken } = useContext(AuthContext);
 
   const nav = useNavigate();
