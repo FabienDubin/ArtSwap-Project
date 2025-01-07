@@ -17,6 +17,7 @@ const AuthContextWrapper = ({ children }) => {
   //Store token in the local storage when the user is authenticated
   const storeToken = (token) => {
     localStorage.setItem("token", token);
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
   };
 
   const verifyToken = async () => {
@@ -48,6 +49,7 @@ const AuthContextWrapper = ({ children }) => {
     localStorage.removeItem("token");
     setIsLoggedIn(false);
     setUser(null);
+    delete axios.defaults.headers.common["Authorization"];
     nav("/");
   };
 
