@@ -166,7 +166,7 @@ const Friend = () => {
   //Redirect the user to the image page
   const handleImageClick = (index) => {
     const imgId = friendCollection[index].id;
-    nav(`/for-frodo/${imgId}`);
+    nav(`/image/${imgId}`);
   };
 
   //Move to the previous/next page of the collection
