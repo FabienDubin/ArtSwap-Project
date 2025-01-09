@@ -49,12 +49,12 @@ const Login = () => {
     <>
       <div className="flex flex-col items-center justify-center min-h-[80vh]">
         <div className="container mx-auto p-8 md:max-w-3xl">
-          <h1 className="text-2xl font-bold text-center mb-4 uppercase">
+          <h1 className="text-2xl font-bold text-center mb-4 uppercase ">
             Login
           </h1>
           {/* Login form*/}
 
-          <form onSubmit={handleLogin} className="flex flex-col gap-2">
+          <form onSubmit={handleLogin} className="flex flex-col gap-2 ">
             <Input
               className="w-full mb-2"
               type="email"

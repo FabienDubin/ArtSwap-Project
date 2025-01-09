@@ -56,6 +56,15 @@ const Swap = ({
   const swiped = (direction, nameToDelete, index) => {
     setLastDirection(direction);
     updateCurrentIndex(index - 1);
+    if (direction === "right") {
+      addImageToCollection(imageSample[currentIndex]._id);
+      // console.log({
+      //   userId: user._id,
+      //   imageId: imageSample[currentIndex]._id,
+      // });
+
+      addedImages.push(imageSample[currentIndex]._id);
+    }
   };
 
   const outOfFrame = (name, idx) => {
