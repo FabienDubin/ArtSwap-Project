@@ -20,7 +20,10 @@ Art Swap was built as a capstone project during my Ironhack bootcamp. It aims to
 
 ## Table of Contents
 
+<details>
+
 - [Table of Contents](#table-of-contents)
+- [](#)
 - [Overview](#overview)
 - [Features](#features)
   - [Core Features](#core-features)
@@ -38,7 +41,7 @@ Art Swap was built as a capstone project during my Ironhack bootcamp. It aims to
 - [Future Enhancements](#future-enhancements)
 - [Acknowledgements](#acknowledgements)
 
----
+## </details>
 
 ## Overview
 
@@ -84,7 +87,7 @@ The platform is inspired by the aesthetics of art galleries, featuring a minimal
 
 ## Project Structure
 
-<details open>
+<details>
 
 ```sh
 └── ArtSwap/
@@ -146,7 +149,7 @@ The platform is inspired by the aesthetics of art galleries, featuring a minimal
         └── server.js
 ```
 
-<detail />
+</details>
 
 ---
 
